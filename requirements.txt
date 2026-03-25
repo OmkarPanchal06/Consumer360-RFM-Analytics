@@ -1,0 +1,34 @@
+# Database
+pyodbc==4.0.35
+sqlalchemy==2.0.23
+pymssql==2.2.11
+
+# Data Processing
+pandas==2.2.2
+numpy==1.24.3
+scipy==1.11.2
+
+# Machine Learning & Analytics
+scikit-learn==1.3.0
+lifetimes==0.11.3
+mlxtend==0.22.0
+
+# Visualization
+matplotlib==3.7.2
+seaborn==0.12.2
+plotly==5.16.1
+
+# Automation
+schedule==1.2.0
+APScheduler==3.10.1
+
+# Testing & Development
+pytest==7.4.0
+pytest-cov==4.1.0
+black==23.7.0
+pylint==2.17.5
+
+# Others
+python-dotenv==1.0.0
+pyyaml==6.0.1
+requests==2.31.0
