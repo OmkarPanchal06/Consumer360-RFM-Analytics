@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 class DataExtractor:
     """Extracts customer data from SQL Server"""
-    
+
     def __init__(self):
         """Connect to database"""
         try:
@@ -32,26 +32,26 @@ class DataExtractor:
         except Exception as e:
             logger.error(f"✗ Connection failed: {e}")
             raise
-    
+
     def extract_customer_360(self):
         """Extract Customer 360 view data"""
         query = """
-        SELECT * 
+        SELECT *
         FROM vw_Customer360_SingleView
         WHERE TotalSpend > 0
         ORDER BY TotalSpend DESC
         """
-        
+
         try:
             df = pd.read_sql_query(query, self.engine)
             logger.info(f"✓ Extracted {len(df):,} customer records")
             logger.info(f"  Columns: {list(df.columns)}")
             return df
-        
+
         except Exception as e:
             logger.error(f"✗ Extraction failed: {e}")
             raise
-    
+
     def close_connection(self):
         """Close database connection"""
         self.engine.dispose()
@@ -61,12 +61,12 @@ class DataExtractor:
 # TEST THE MODULE
 if __name__ == "__main__":
     print("Testing Data Extraction...")
-    
+
     extractor = DataExtractor()
     df = extractor.extract_customer_360()
-    
+
     print(f"\nData shape: {df.shape}")
     print(f"\nFirst 3 rows:")
     print(df.head(3))
-    
+
     extractor.close_connection()

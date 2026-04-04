@@ -14,12 +14,24 @@ load_dotenv()
 
 SQL_SERVER = os.getenv('SQL_SERVER', 'localhost')
 DATABASE = os.getenv('DATABASE', 'Consumer360_DB')
-DB_USERNAME = os.getenv('DB_USERNAME', 'sa')
+DB_USERNAME = os.getenv('DB_USERNAME', '')
 DB_PASSWORD = os.getenv('DB_PASSWORD', '')
 DRIVER = 'ODBC Driver 17 for SQL Server'
 
-# Connection string for SQLAlchemy
-CONNECTION_STRING = f'mssql+pyodbc://{DB_USERNAME}:{DB_PASSWORD}@{SQL_SERVER}/{DATABASE}?driver={DRIVER}'
+# Build connection string:
+# - If DB_USERNAME is set, use SQL Server Authentication
+# - Otherwise, use Windows Authentication (trusted_connection)
+if DB_USERNAME:
+    CONNECTION_STRING = (
+        f"mssql+pyodbc://{DB_USERNAME}:{DB_PASSWORD}@{SQL_SERVER}/{DATABASE}"
+        f"?driver={DRIVER}"
+    )
+else:
+    # Windows Authentication (default for local installs)
+    CONNECTION_STRING = (
+        f"mssql+pyodbc://@{SQL_SERVER}/{DATABASE}"
+        f"?driver={DRIVER}&trusted_connection=yes"
+    )
 
 # ============================================================
 # PROJECT PATHS
