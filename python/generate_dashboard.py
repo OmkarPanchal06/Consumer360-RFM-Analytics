@@ -23,7 +23,8 @@ from rfm_calculator import RFMCalculator
 from clv_calculator import CLVCalculator
 from sqlalchemy import create_engine
 
-OUTPUT_DIR = os.path.join(PROJECT_ROOT, "powerbi")
+# Redirecting to 'docs' for GitHub Pages live hosting
+OUTPUT_DIR = os.path.join(PROJECT_ROOT, "docs")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # ─────────────────────────────────────────────
@@ -130,7 +131,8 @@ def export_excel(df):
 # STEP 3: BUILD PLOTLY HTML DASHBOARD
 # ─────────────────────────────────────────────
 def build_dashboard(df, seg):
-    path = os.path.join(OUTPUT_DIR, "Consumer360_Dashboard.html")
+    # Setting as index.html for GitHub Pages compatibility
+    path = os.path.join(OUTPUT_DIR, "index.html")
     print(f"Building Premium HTML dashboard...")
 
     # ── KPI values ──
