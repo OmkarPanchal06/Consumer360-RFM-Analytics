@@ -27,25 +27,33 @@ OUTPUT_DIR = os.path.join(PROJECT_ROOT, "powerbi")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # ─────────────────────────────────────────────
-# COLOR PALETTE
+# COLOR PALETTE (Premium Design System)
 # ─────────────────────────────────────────────
 COLORS = {
-    "Champions":                "#6C63FF",
-    "Loyal Customers":          "#3ECFCF",
-    "Potential Loyalists":      "#56D364",
-    "Customers Needing Attention": "#F0A500",
-    "At Risk":                  "#FF6B6B",
-    "Hibernating":              "#9CA3AF",
-    "New/Low Value":            "#60A5FA",
+    "Champions":                "#8B5CF6",  # Violet
+    "Loyal Customers":          "#06B6D4",  # Cyan
+    "Potential Loyalists":      "#10B981",  # Emerald
+    "Customers Needing Attention": "#F59E0B", # Amber
+    "At Risk":                  "#EF4444",  # Red
+    "Hibernating":              "#64748B",  # Slate
+    "New/Low Value":            "#3B82F6",  # Blue
 }
-BG        = "#0F172A"
-CARD_BG   = "#1E293B"
-TEXT      = "#F1F5F9"
+BG        = "#0B0F19"
+CARD_BG   = "rgba(30, 41, 59, 0.5)"
+TEXT      = "#F8FAFC"
 SUBTEXT   = "#94A3B8"
-ACCENT    = "#6C63FF"
-GREEN     = "#56D364"
-RED       = "#FF6B6B"
-AMBER     = "#F0A500"
+ACCENT    = "#8B5CF6"
+GREEN     = "#10B981"
+RED       = "#EF4444"
+AMBER     = "#F59E0B"
+
+# Icons (SVG paths for Heroicons)
+ICONS = {
+    "users": '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>',
+    "revenue": '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>',
+    "clv": '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" /></svg>',
+    "chart": '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" /></svg>',
+}
 
 
 # ─────────────────────────────────────────────
@@ -123,363 +131,360 @@ def export_excel(df):
 # ─────────────────────────────────────────────
 def build_dashboard(df, seg):
     path = os.path.join(OUTPUT_DIR, "Consumer360_Dashboard.html")
-    print(f"Building HTML dashboard...")
+    print(f"Building Premium HTML dashboard...")
 
-    # ── KPI values ────────────────────────────
+    # ── KPI values ──
     total_customers = len(df)
     total_revenue   = df["TotalSpend"].sum() if "TotalSpend" in df.columns else 0
     avg_clv         = df["CLV_Predicted"].mean() if "CLV_Predicted" in df.columns else 0
-    top_segment     = seg.iloc[0]["Segment"] if len(seg) > 0 else "N/A"
     avg_rfm         = df["RFM_Score"].mean() if "RFM_Score" in df.columns else 0
-    champ_pct       = (
-        len(df[df["Segment"].isin(["Champions", "Loyal Customers"])]) / total_customers * 100
-        if total_customers > 0 else 0
-    )
+    champ_pct       = (len(df[df["Segment"].isin(["Champions", "Loyal Customers"])]) / total_customers * 100) if total_customers > 0 else 0
 
     seg_colors = [COLORS.get(s, ACCENT) for s in seg["Segment"]]
 
-    # ── Chart 1: Segment donut ─────────────────
+    # ── Charts ──
+    # 1. Segment Donut
     fig_donut = go.Figure(go.Pie(
-        labels=seg["Segment"],
-        values=seg["Customers"],
-        hole=0.55,
-        marker=dict(colors=seg_colors, line=dict(color=BG, width=2)),
-        textinfo="label+percent",
-        textfont=dict(color=TEXT, size=11),
+        labels=seg["Segment"], values=seg["Customers"], hole=0.7,
+        marker=dict(colors=seg_colors, line=dict(color=BG, width=3)),
+        textinfo="percent", textfont=dict(color=TEXT, size=12),
+        hoverinfo="label+value+percent"
     ))
     fig_donut.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color=TEXT),
-        showlegend=False,
-        margin=dict(t=10, b=10, l=10, r=10),
-        height=300,
-        annotations=[dict(text=f"<b>{total_customers}</b><br>Customers",
-                          x=0.5, y=0.5, font_size=16, font_color=TEXT,
-                          showarrow=False)]
+        font=dict(color=TEXT, family="Inter"), showlegend=False,
+        margin=dict(t=10, b=10, l=10, r=10), height=320,
+        annotations=[dict(text=f"<b>{total_customers}</b><br>Total", x=0.5, y=0.5, font_size=18, showarrow=False)]
     )
 
-    # ── Chart 2: RFM Score bar ─────────────────
+    # 2. RFM Bar
     fig_rfm = go.Figure(go.Bar(
-        x=seg["Segment"],
-        y=seg["Avg_RFM_Score"].round(2),
-        marker=dict(color=seg_colors, line=dict(color=BG, width=1)),
-        text=seg["Avg_RFM_Score"].round(2),
-        textposition="outside",
-        textfont=dict(color=TEXT),
+        x=seg["Segment"], y=seg["Avg_RFM_Score"].round(2),
+        marker=dict(color=seg_colors, opacity=0.8),
+        text=seg["Avg_RFM_Score"].round(2), textposition="outside", textfont=dict(color=TEXT)
     ))
     fig_rfm.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color=TEXT),
-        xaxis=dict(showgrid=False, tickfont=dict(size=10, color=TEXT)),
-        yaxis=dict(showgrid=True, gridcolor="#334155", range=[0, 6]),
-        margin=dict(t=10, b=80, l=40, r=10),
-        height=300,
+        font=dict(color=TEXT, family="Inter"),
+        xaxis=dict(showgrid=False, tickangle=-45), yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.1)"),
+        margin=dict(t=30, b=100, l=40, r=10), height=350
     )
 
-    # ── Chart 3: CLV by segment ────────────────
+    # 3. CLV Bar
     fig_clv = go.Figure(go.Bar(
-        x=seg["Segment"],
-        y=seg["Avg_CLV"].round(0),
-        marker=dict(color=seg_colors, line=dict(color=BG, width=1)),
-        text=["$" + f"{v:,.0f}" for v in seg["Avg_CLV"]],
-        textposition="outside",
-        textfont=dict(color=TEXT),
+        x=seg["Segment"], y=seg["Avg_CLV"].round(0),
+        marker=dict(color=seg_colors, opacity=0.8),
+        text=["$" + f"{v:,.0f}" for v in seg["Avg_CLV"]], textposition="outside"
     ))
     fig_clv.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color=TEXT),
-        xaxis=dict(showgrid=False, tickfont=dict(size=10, color=TEXT)),
-        yaxis=dict(showgrid=True, gridcolor="#334155"),
-        margin=dict(t=10, b=80, l=60, r=10),
-        height=300,
+        font=dict(color=TEXT, family="Inter"),
+        xaxis=dict(showgrid=False, tickangle=-45), yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.1)"),
+        margin=dict(t=30, b=100, l=60, r=10), height=350
     )
 
-    # ── Chart 4: Scatter R vs M score ──────────
+    # 4. RFM Scatter
     scatter_colors = [COLORS.get(s, ACCENT) for s in df["Segment"]]
     fig_scatter = go.Figure(go.Scatter(
-        x=df["R_Score"],
-        y=df["M_Score"],
-        mode="markers+text",
-        marker=dict(size=16, color=scatter_colors,
-                    line=dict(color=BG, width=1)),
-        text=df["CustomerName"] if "CustomerName" in df.columns else df["CustomerID"],
-        textposition="top center",
-        textfont=dict(color=TEXT, size=10),
-        customdata=df[["Segment", "RFM_Score"]],
-        hovertemplate=(
-            "<b>%{text}</b><br>"
-            "Segment: %{customdata[0]}<br>"
-            "R Score: %{x}  M Score: %{y}<br>"
-            "RFM Score: %{customdata[1]:.2f}<extra></extra>"
-        )
+        x=df["R_Score"], y=df["M_Score"], mode="markers",
+        marker=dict(size=12, color=scatter_colors, opacity=0.6, line=dict(color=BG, width=0.5)),
+        text=df["CustomerName"], hovertemplate="<b>%{text}</b><br>R: %{x}, M: %{y}<extra></extra>"
     ))
     fig_scatter.update_layout(
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color=TEXT),
-        xaxis=dict(title="Recency Score", showgrid=True, gridcolor="#334155",
-                   range=[0, 6], tickvals=[1,2,3,4,5]),
-        yaxis=dict(title="Monetary Score", showgrid=True, gridcolor="#334155",
-                   range=[0, 6], tickvals=[1,2,3,4,5]),
-        margin=dict(t=10, b=50, l=60, r=10),
-        height=320,
+        font=dict(color=TEXT, family="Inter"),
+        xaxis=dict(title="Recency Score", gridcolor="rgba(255,255,255,0.05)", range=[0.5, 5.5], tickvals=[1,2,3,4,5]),
+        yaxis=dict(title="Monetary Score", gridcolor="rgba(255,255,255,0.05)", range=[0.5, 5.5], tickvals=[1,2,3,4,5]),
+        margin=dict(t=40, b=40, l=60, r=40), height=400
     )
 
-    # ── Chart 5: Spend treemap ─────────────────
+    # 5. Spend Treemap
     fig_tree = px.treemap(
-        seg,
-        path=["Segment"],
-        values="Total_Spend",
-        color="Avg_RFM_Score",
-        color_continuous_scale=[[0, "#334155"], [0.5, ACCENT], [1, GREEN]],
-        custom_data=["Customers", "Avg_CLV"],
-    )
-    fig_tree.update_traces(
-        hovertemplate=(
-            "<b>%{label}</b><br>"
-            "Total Spend: $%{value:,.0f}<br>"
-            "Customers: %{customdata[0]}<br>"
-            "Avg CLV: $%{customdata[1]:,.0f}<extra></extra>"
-        ),
-        textfont=dict(color="white", size=13),
+        seg, path=["Segment"], values="Total_Spend",
+        color="Avg_RFM_Score", color_continuous_scale=[[0, "#334155"], [1, ACCENT]]
     )
     fig_tree.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        margin=dict(t=5, b=5, l=5, r=5),
-        height=280,
-        coloraxis_showscale=False,
+        paper_bgcolor="rgba(0,0,0,0)", margin=dict(t=5, b=5, l=5, r=5),
+        height=320, coloraxis_showscale=False
     )
 
-    # ── Convert figs to JSON ───────────────────
-    def fig_json(fig):
-        return fig.to_json()
-
-    # ── Customer table rows ────────────────────
-    table_cols = ["CustomerName", "Segment", "R_Score", "F_Score", "M_Score",
-                  "RFM_Score", "TotalSpend", "CLV_Predicted"]
-    table_cols = [c for c in table_cols if c in df.columns]
-    table_df = df[table_cols].copy()
+    # ── HTML Components ──
+    def fig_json(fig): return fig.to_json()
 
     def seg_badge(s):
         c = COLORS.get(s, ACCENT)
-        return f'<span style="background:{c}22;color:{c};padding:2px 10px;border-radius:12px;font-size:11px;border:1px solid {c}55">{s}</span>'
+        return f'<span class="badge" style="background:{c}22;color:{c};border:1px solid {c}55">{s}</span>'
 
     rows_html = ""
-    for _, r in table_df.iterrows():
-        name   = r.get("CustomerName", r.get("CustomerID", ""))
-        seg_b  = seg_badge(r.get("Segment", ""))
-        r_s    = int(r.get("R_Score", 0))
-        f_s    = int(r.get("F_Score", 0))
-        m_s    = int(r.get("M_Score", 0))
-        rfm_s  = f'{r.get("RFM_Score", 0):.2f}'
-        spend  = f'${r.get("TotalSpend", 0):,.2f}'
-        clv    = f'${r.get("CLV_Predicted", 0):,.2f}'
+    # Sort by RFM Score to show top customers first by default
+    for _, r in df.sort_values("RFM_Score", ascending=False).head(100).iterrows():
+        name  = r.get("CustomerName", r.get("CustomerID", ""))
+        seg_b = seg_badge(r.get("Segment", ""))
         rows_html += f"""
         <tr>
-          <td>{name}</td>
+          <td class="font-medium">{name}</td>
           <td>{seg_b}</td>
-          <td><span class="score">{r_s}</span></td>
-          <td><span class="score">{f_s}</span></td>
-          <td><span class="score">{m_s}</span></td>
-          <td><b style="color:{ACCENT}">{rfm_s}</b></td>
-          <td>{spend}</td>
-          <td style="color:{GREEN}">{clv}</td>
+          <td><div class="score-pill">{int(r.get('R_Score',0))}</div></td>
+          <td><div class="score-pill">{int(r.get('F_Score',0))}</div></td>
+          <td><div class="score-pill">{int(r.get('M_Score',0))}</div></td>
+          <td class="text-accent font-bold">{r.get('RFM_Score',0):.2f}</td>
+          <td>${r.get('TotalSpend',0):,.2f}</td>
+          <td class="text-green font-medium">${r.get('CLV_Predicted',0):,.2f}</td>
         </tr>"""
 
-    # ── Legend items ──────────────────────────
     legend_html = ""
     for s, c in COLORS.items():
-        count = len(df[df["Segment"] == s]) if s in df["Segment"].values else 0
-        if count > 0:
-            legend_html += f'<div class="legend-item"><span style="width:10px;height:10px;border-radius:50%;background:{c};display:inline-block;margin-right:6px"></span>{s} <span style="color:{SUBTEXT}">({count})</span></div>'
+        if s in seg["Segment"].values:
+            legend_html += f'<div class="legend-item"><span class="dot" style="background:{c}"></span>{s}</div>'
 
-    # ─────────────────────────────────────────
-    # HTML TEMPLATE
-    # ─────────────────────────────────────────
+    # ── Main Template ──
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Consumer360 — Analytics Dashboard</title>
-<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ font-family: 'Inter', sans-serif; background: {BG}; color: {TEXT}; min-height: 100vh; }}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumer360 | Analytical Suite</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {{
+            --bg: {BG}; --card-bg: {CARD_BG}; --text: {TEXT}; --subtext: {SUBTEXT};
+            --accent: {ACCENT}; --green: {GREEN}; --red: {RED}; --amber: {AMBER};
+            --glass: rgba(255, 255, 255, 0.03); --border: rgba(255, 255, 255, 0.08);
+        }}
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+        body {{ 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); 
+            line-height: 1.5; overflow-x: hidden; 
+        }}
+        h1, h2, h3 {{ font-family: 'Outfit', sans-serif; }}
 
-  /* ── HEADER ── */
-  .header {{
-    background: linear-gradient(135deg, #1E1B4B 0%, #0F172A 60%, #0D1B2A 100%);
-    padding: 28px 40px;
-    border-bottom: 1px solid #1E293B;
-    display: flex; align-items: center; justify-content: space-between;
-  }}
-  .header-left h1 {{ font-size: 24px; font-weight: 700; color: {TEXT}; }}
-  .header-left p  {{ font-size: 13px; color: {SUBTEXT}; margin-top: 4px; }}
-  .header-badge {{
-    background: {ACCENT}22; color: {ACCENT};
-    padding: 6px 16px; border-radius: 20px;
-    font-size: 12px; font-weight: 600;
-    border: 1px solid {ACCENT}44;
-  }}
+        /* Sidebar & Layout */
+        .app-container {{ display: flex; min-height: 100vh; }}
+        .sidebar {{
+            width: 260px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border); padding: 32px 24px;
+            display: flex; flex-direction: column; position: fixed; height: 100vh;
+        }}
+        .main-content {{ flex: 1; margin-left: 260px; padding: 40px; }}
 
-  /* ── KPI CARDS ── */
-  .kpi-row {{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; padding: 24px 40px 0; }}
-  .kpi {{
-    background: {CARD_BG}; border-radius: 12px;
-    padding: 20px; border: 1px solid #334155;
-    transition: transform 0.2s, box-shadow 0.2s;
-  }}
-  .kpi:hover {{ transform: translateY(-2px); box-shadow: 0 8px 30px rgba(108,99,255,0.15); }}
-  .kpi-label {{ font-size: 11px; color: {SUBTEXT}; text-transform: uppercase; letter-spacing: 0.05em; }}
-  .kpi-value {{ font-size: 26px; font-weight: 700; margin: 6px 0 2px; }}
-  .kpi-sub   {{ font-size: 11px; color: {SUBTEXT}; }}
+        /* Branding */
+        .brand {{ display: flex; align-items: center; gap: 12px; margin-bottom: 48px; }}
+        .logo-box {{ 
+            width: 40px; height: 40px; background: var(--accent); border-radius: 10px;
+            display: grid; place-items: center; color: white; box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }}
+        .brand-text h2 {{ font-size: 18px; letter-spacing: -0.5px; }}
+        .brand-text p {{ font-size: 11px; color: var(--subtext); text-transform: uppercase; letter-spacing: 1px; }}
 
-  /* ── GRID ── */
-  .grid-2 {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px 40px 0; }}
-  .grid-3 {{ display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; padding: 0 40px; }}
-  .grid-full {{ padding: 16px 40px; }}
+        /* Navigation */
+        .nav-list {{ list-style: none; }}
+        .nav-item {{
+            padding: 12px 16px; border-radius: 10px; margin-bottom: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 12px; transition: 0.2s; color: var(--subtext);
+        }}
+        .nav-item svg {{ width: 20px; opacity: 0.7; }}
+        .nav-item:hover {{ background: var(--glass); color: var(--text); }}
+        .nav-item.active {{ background: var(--accent); color: white; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }}
+        .nav-item.active svg {{ opacity: 1; }}
 
-  /* ── CARD ── */
-  .card {{
-    background: {CARD_BG}; border-radius: 12px;
-    border: 1px solid #334155; padding: 20px;
-    transition: box-shadow 0.2s;
-  }}
-  .card:hover {{ box-shadow: 0 4px 20px rgba(0,0,0,0.3); }}
-  .card-title {{ font-size: 13px; font-weight: 600; color: {SUBTEXT}; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }}
+        /* Header */
+        .top-bar {{ display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 32px; }}
+        .top-bar h1 {{ font-size: 28px; font-weight: 700; }}
+        .export-btn {{
+            display: flex; align-items: center; gap: 8px; padding: 10px 20px;
+            background: var(--glass); border: 1px solid var(--border); border-radius: 8px;
+            font-size: 13px; font-weight: 500; cursor: pointer; transition: 0.2s;
+        }}
+        .export-btn:hover {{ background: rgba(255,255,255,0.08); }}
 
-  /* ── LEGEND ── */
-  .legend {{ display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }}
-  .legend-item {{ font-size: 12px; color: {TEXT}; }}
+        /* KPIs */
+        .kpi-grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px; }}
+        .kpi-card {{
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+            padding: 24px; backdrop-filter: blur(10px);
+        }}
+        .kpi-head {{ display: flex; justify-content: space-between; align-items: flex-start; color: var(--subtext); margin-bottom: 16px; }}
+        .kpi-icon {{ color: var(--accent); opacity: 0.8; height: 20px; width: 20px; }}
+        .kpi-value {{ font-size: 28px; font-weight: 700; margin-bottom: 4px; }}
+        .kpi-label {{ font-size: 13px; font-weight: 500; color: var(--subtext); }}
 
-  /* ── TABLE ── */
-  .table-wrap {{ overflow-x: auto; border-radius: 12px; }}
-  table {{ width: 100%; border-collapse: collapse; font-size: 13px; }}
-  thead tr {{ background: #334155; }}
-  thead th {{ padding: 12px 16px; text-align: left; font-weight: 600; color: {SUBTEXT}; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }}
-  tbody tr {{ border-bottom: 1px solid #1E293B; transition: background 0.15s; }}
-  tbody tr:hover {{ background: #334155; }}
-  tbody td {{ padding: 12px 16px; }}
-  .score {{
-    display: inline-block; width: 28px; height: 28px; line-height: 28px;
-    text-align: center; border-radius: 6px;
-    background: {ACCENT}22; color: {ACCENT}; font-weight: 700; font-size: 13px;
-  }}
+        /* Dashboard Sections */
+        .tab-content {{ display: none; animation: fadeIn 0.4s ease; }}
+        .tab-content.active {{ display: block; }}
+        @keyframes fadeIn {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: translateY(0); }} }}
 
-  /* ── FOOTER ── */
-  .footer {{ text-align: center; padding: 30px; color: {SUBTEXT}; font-size: 12px; margin-top: 20px; }}
-  .footer a {{ color: {ACCENT}; text-decoration: none; }}
-</style>
+        .chart-grid {{ display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; margin-bottom: 24px; }}
+        .card {{
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+            padding: 24px; backdrop-filter: blur(10px);
+        }}
+        .card-title {{ font-size: 14px; font-weight: 600; color: var(--subtext); margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px; }}
+
+        /* Legend */
+        .legend {{ display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 24px; }}
+        .legend-item {{ display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--subtext); }}
+        .dot {{ width: 8px; height: 8px; border-radius: 50%; }}
+
+        /* Table */
+        .table-wrap {{ overflow-x: auto; }}
+        table {{ width: 100%; border-collapse: collapse; text-align: left; }}
+        th {{ padding: 16px; color: var(--subtext); font-size: 11px; text-transform: uppercase; border-bottom: 1px solid var(--border); }}
+        td {{ padding: 16px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03); }}
+        tr:hover td {{ background: rgba(255,255,255,0.02); }}
+        .badge {{ padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }}
+        .score-pill {{ 
+            background: var(--glass); width: 24px; height: 24px; border-radius: 6px;
+            display: grid; place-items: center; font-weight: 700; font-size: 11px;
+        }}
+        .font-medium {{ font-weight: 500; }}
+        .font-bold {{ font-weight: 700; }}
+        .text-accent {{ color: var(--accent); }}
+        .text-green {{ color: var(--green); }}
+
+    </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="header-left">
-    <h1>Consumer360 &mdash; RFM Analytics Dashboard</h1>
-    <p>Customer Lifetime Value &amp; Segmentation Engine</p>
-  </div>
-  <span class="header-badge">LIVE DATA &bull; {total_customers} Customers</span>
-</div>
+<div class="app-container">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="logo-box">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            </div>
+            <div class="brand-text">
+                <h2>Consumer360</h2>
+                <p>Advanced Analytics</p>
+            </div>
+        </div>
 
-<!-- KPI CARDS -->
-<div class="kpi-row">
-  <div class="kpi">
-    <div class="kpi-label">Total Customers</div>
-    <div class="kpi-value" style="color:{ACCENT}">{total_customers:,}</div>
-    <div class="kpi-sub">Across {len(seg)} segments</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">Total Revenue</div>
-    <div class="kpi-value" style="color:{GREEN}">${total_revenue:,.0f}</div>
-    <div class="kpi-sub">All transactions</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">Avg Predicted CLV</div>
-    <div class="kpi-value" style="color:{AMBER}">${avg_clv:,.0f}</div>
-    <div class="kpi-sub">5-year forecast</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">Avg RFM Score</div>
-    <div class="kpi-value" style="color:{TEXT}">{avg_rfm:.2f} <span style="font-size:14px;color:{SUBTEXT}">/5</span></div>
-    <div class="kpi-sub">Weighted R·F·M</div>
-  </div>
-  <div class="kpi">
-    <div class="kpi-label">High-Value Rate</div>
-    <div class="kpi-value" style="color:{GREEN}">{champ_pct:.0f}%</div>
-    <div class="kpi-sub">Champions + Loyal</div>
-  </div>
-</div>
+        <ul class="nav-list" id="nav-tabs">
+            <li class="nav-item active" data-tab="tab-overview">{ICONS['chart']} Overview</li>
+            <li class="nav-item" data-tab="tab-analysis">{ICONS['users']} Customer Analysis</li>
+            <li class="nav-item" data-tab="tab-data">{ICONS['clv']} Data Registry</li>
+        </ul>
 
-<!-- ROW 1: Donut + RFM Bar -->
-<div class="grid-2" style="margin-top:16px">
-  <div class="card">
-    <div class="card-title">Customer Segments</div>
-    <div class="legend">{legend_html}</div>
-    <div id="chart-donut"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Avg RFM Score by Segment</div>
-    <div id="chart-rfm"></div>
-  </div>
-</div>
+        <div style="margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border);">
+            <p style="font-size: 11px; color: var(--subtext);">Cycle Date</p>
+            <p style="font-size: 12px; font-weight: 500;">Q2 FY 2026</p>
+        </div>
+    </aside>
 
-<!-- ROW 2: CLV Bar + Scatter -->
-<div class="grid-2" style="padding: 16px 40px 0">
-  <div class="card">
-    <div class="card-title">Avg Predicted CLV by Segment (5-Year)</div>
-    <div id="chart-clv"></div>
-  </div>
-  <div class="card">
-    <div class="card-title">Recency vs Monetary Map</div>
-    <div id="chart-scatter"></div>
-  </div>
-</div>
+    <main class="main-content">
+        <div class="top-bar">
+            <div>
+                <h1>Business Intelligence</h1>
+                <p style="color: var(--subtext); font-size: 13px;">Market segmentation and predictive lifetime valuation engine.</p>
+            </div>
+            <button class="export-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Download Data
+            </button>
+        </div>
 
-<!-- ROW 3: Treemap full -->
-<div class="grid-full" style="margin-top:0">
-  <div class="card">
-    <div class="card-title">Revenue Treemap — Segment Share of Total Spend</div>
-    <div id="chart-tree"></div>
-  </div>
-</div>
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-head"><span class="kpi-label">Market Reach</span><span class="kpi-icon">{ICONS['users']}</span></div>
+                <div class="kpi-value">{total_customers:,}</div>
+                <div style="font-size: 11px; color: var(--green); font-weight: 600;">Active Accounts</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-head"><span class="kpi-label">Stored Equity</span><span class="kpi-icon">{ICONS['revenue']}</span></div>
+                <div class="kpi-value" style="color: var(--green);">${total_revenue:,.0f}</div>
+                <div style="font-size: 11px; color: var(--subtext); font-weight: 500;">Gross Transaction Value</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-head"><span class="kpi-label">Lifetime Valuation</span><span class="kpi-icon">{ICONS['clv']}</span></div>
+                <div class="kpi-value" style="color: var(--amber);">${avg_clv:,.0f}</div>
+                <div style="font-size: 11px; color: var(--subtext); font-weight: 500;">Avg Predicted Yield (5yr)</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-head"><span class="kpi-label">Customer Quality</span><span class="kpi-icon">{ICONS['chart']}</span></div>
+                <div class="kpi-value">{avg_rfm:.2f}</div>
+                <div style="font-size: 11px; color: var(--accent); font-weight: 600;">Composite RFM Index</div>
+            </div>
+        </div>
 
-<!-- ROW 4: Customer Table -->
-<div class="grid-full">
-  <div class="card">
-    <div class="card-title">Customer Detail Table</div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Segment</th>
-            <th>R</th><th>F</th><th>M</th>
-            <th>RFM Score</th>
-            <th>Total Spend</th>
-            <th>CLV (5yr)</th>
-          </tr>
-        </thead>
-        <tbody>{rows_html}</tbody>
-      </table>
-    </div>
-  </div>
-</div>
+        <!-- TAB 1: OVERVIEW -->
+        <div id="tab-overview" class="tab-content active">
+            <div class="chart-grid">
+                <div class="card">
+                    <div class="card-title">Portfolio Composition</div>
+                    <div id="chart-donut"></div>
+                    <div class="legend" style="margin-top: 16px;">{legend_html}</div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Revenue Share Treemap</div>
+                    <div id="chart-tree"></div>
+                </div>
+            </div>
+        </div>
 
-<div class="footer">
-  Consumer360 RFM Analytics &bull;
-  <a href="https://github.com/OmkarPanchal06/Consumer360-RFM-Analytics" target="_blank">GitHub</a>
-  &bull; Built with Python + Plotly
+        <!-- TAB 2: ANALYSIS -->
+        <div id="tab-analysis" class="tab-content">
+            <div class="chart-grid">
+                <div class="card">
+                    <div class="card-title">Segment Behavioral Ranking</div>
+                    <div id="chart-rfm"></div>
+                </div>
+                <div class="card">
+                    <div class="card-title">Projected Value per Segment</div>
+                    <div id="chart-clv"></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">Behavioral Scatter Mapping (Recency vs Monetary)</div>
+                <div id="chart-scatter"></div>
+            </div>
+        </div>
+
+        <!-- TAB 3: DATA -->
+        <div id="tab-data" class="tab-content">
+            <div class="card">
+                <div class="card-title">Customer Behavioral Registry (Top 100)</div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Identity</th>
+                                <th>Segment</th>
+                                <th>R</th><th>F</th><th>M</th>
+                                <th>RFM Index</th>
+                                <th>Gross Volume</th>
+                                <th>LTV Projection</th>
+                            </tr>
+                        </thead>
+                        <tbody>{rows_html}</tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
 
 <script>
-  var cfg = {{responsive: true, displayModeBar: false}};
-  Plotly.newPlot('chart-donut',   {fig_json(fig_donut)}.data,   {fig_json(fig_donut)}.layout,   cfg);
-  Plotly.newPlot('chart-rfm',     {fig_json(fig_rfm)}.data,     {fig_json(fig_rfm)}.layout,     cfg);
-  Plotly.newPlot('chart-clv',     {fig_json(fig_clv)}.data,     {fig_json(fig_clv)}.layout,     cfg);
-  Plotly.newPlot('chart-scatter', {fig_json(fig_scatter)}.data, {fig_json(fig_scatter)}.layout, cfg);
-  Plotly.newPlot('chart-tree',    {fig_json(fig_tree)}.data,    {fig_json(fig_tree)}.layout,    cfg);
+    const cfg = {{responsive: true, displayModeBar: false}};
+    const plots = [
+        {{id: 'chart-donut', data: {fig_json(fig_donut)}}},
+        {{id: 'chart-rfm', data: {fig_json(fig_rfm)}}},
+        {{id: 'chart-clv', data: {fig_json(fig_clv)}}},
+        {{id: 'chart-scatter', data: {fig_json(fig_scatter)}}},
+        {{id: 'chart-tree', data: {fig_json(fig_tree)}}}
+    ];
+    
+    plots.forEach(p => Plotly.newPlot(p.id, p.data.data, p.data.layout, cfg));
+
+    // Tab Navigation Logic
+    document.querySelectorAll('.nav-item').forEach(btn => {{
+        btn.addEventListener('click', () => {{
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            window.dispatchEvent(new Event('resize'));
+        }});
+    }});
 </script>
 </body>
 </html>"""
@@ -487,7 +492,7 @@ def build_dashboard(df, seg):
     with open(path, "w", encoding="utf-8") as f:
         f.write(html)
 
-    print(f"  Dashboard saved!")
+    print(f"  Premium Dashboard generated successfully!")
     return path
 
 
