@@ -1,161 +1,58 @@
-# Consumer360 - Customer Segmentation & Lifetime Value Engine
+# Consumer360: Customer Segmentation & ETL Pipeline
 
-## What is this project?
+Consumer360 is an end-to-end data engineering and analytics pipeline. It processes raw retail transaction data to calculate actionable metrics like Customer Lifetime Value (CLV), RFM (Recency, Frequency, Monetary) segmentation, Market Basket associations, and Retention Cohorts.
 
-Consumer360 is a data analytics system that analyzes customer behavior to:
-- Identify valuable customers (Champions) vs at-risk customers
-- Calculate how much money each customer will spend over time (CLV)
-- Create interactive dashboards for business decisions
+## Architecture & Data Flow
 
-## Key Results
-
-- **1.2M+ customers analyzed** in production systems
-- **87% accuracy** in predicting which customers might leave
-- **42% revenue increase** from targeted campaigns
-- **<2 seconds** query execution time
+The project follows a standard batch processing architecture:
+1. **Extraction**: Raw transaction data is read from CSV files (e.g. Kaggle datasets) and inserted into a local SQL Server testing database.
+2. **Transformation**: Analytical logic is written in Python using Pandas to pull from SQL Server, calculate derived segmentation metrics, and map relationships.
+3. **Load / Export**: Enriched customer groupings and cohort analytics are written back as new tables into SQL Server.
+4. **Visualization**: An automated Plotly script reads this output to generate static HTML dashboards and an Executive PowerPoint summarizing churn risks.
 
 ## Technology Stack
 
-### Database
-- SQL Server 2019+
-- Star Schema design
-- Advanced queries with Window Functions
+* **Database**: SQL Server 2019+ (Star Schema design)
+* **Processing**: Python 3.9+ (Pandas, SQLAlchemy, mlxtend)
+* **Automation**: Windows Task Scheduler batch scripts
+* **Visualization**: Plotly, Python-PPTX, Power BI Desktop (Optional)
 
-### Programming
-- Python 3.9+
-- Pandas for data processing
-- Statistical analysis libraries
-
-### Visualization
-- Power BI for dashboards
-- Interactive reports with filters
-- Row-level security
-
-## Quick Start
+## Local Setup
 
 ### Prerequisites
-- SQL Server
-- Python 3.9+
-- Power BI Desktop
+* SQL Server installed locally (with Windows Authentication)
+* Python 3.9+
 
-### Installation
+### Installation & Execution
+1. Clone the repository and navigate into the directory.
+2. Initialize and activate a Python virtual environment.
+3. Install the required packages via `pip install -r requirements.txt`.
+4. Configure your `.env` file with the server credentials. Run the baseline scripts in the `sql/` directory to create the tables.
+5. In your command line, run the pipeline execution file: `python python/main_pipeline.py`.
+6. Open the `powerbi/Consumer360_Dashboard.html` file in your browser to view the interactive insights, or open the `.pptx` deck.
 
-1. **Clone the repository**
-```bash
-git clone https://github.com/OmkarPanchal06/Consumer360-RFM-Analytics.git
-cd Consumer360-RFM-Analytics
-```
+## Analytical Logic Explained
 
-2. **Create virtual environment**
-```bash
-python -m venv venv
-venv\Scripts\activate  # Windows
-source venv/bin/activate  # Mac/Linux
-```
+### RFM Segmentation
+RFM is a proven marketing model for behavior-based customer segmentation.
+* **Recency**: Days since the last purchase.
+* **Frequency**: Total transaction count.
+* **Monetary**: Total spend across all transactions.
 
-3. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
+### Market Basket Analysis
+Used exclusively on order-line transactions to find patterns. Using the Apriori algorithm, the pipeline links items frequently bought together and generates support, confidence, and metric rules.
 
-4. **Configure database**
-   - Edit `.env` file with your SQL credentials
-   - Run SQL scripts in `sql/` folder (in order: 01 → 04)
+### Cohort Analysis
+Grouping customers based on their acquisition month and calculating percentage retention over subsequent months to identify lifetime drop-off points.
 
-5. **Run pipeline**
-```bash
-python python/main_pipeline.py
-```
+## Support & Maintenance
 
-6. **Open Power BI**
-   - Open `powerbi/Consumer360_Dashboard.pbix`
-   - Refresh data
-
-## Project Structure
-
-```
-Consumer360-RFM-Analytics/
-├── sql/                    # SQL scripts for database
-│   ├── 01_create_schema.sql
-│   ├── 02_populate_dates.sql
-│   ├── 03_customer_360_view.sql
-│   └── 04_sample_data.sql
-│
-├── python/                 # Python code
-│   ├── config.py          # Configuration
-│   ├── data_extraction.py # Get data from SQL
-│   ├── rfm_calculator.py  # RFM logic
-│   ├── clv_calculator.py  # CLV calculation
-│   └── main_pipeline.py   # Run everything
-│
-├── powerbi/                # Power BI dashboards
-│   └── Consumer360_Dashboard.pbix
-│
-├── docs/                   # GitHub Pages website
-│   └── index.html
-│
-├── logs/                   # Log files (auto-generated)
-├── data/                   # Output data (auto-generated)
-│
-├── requirements.txt        # Python packages
-├── .env                    # Database credentials (SECRET - never commit!)
-└── README.md              # This file
-```
-
-## RFM Segmentation Explained
-
-### What is RFM?
-- **R (Recency):** How recently did they buy? (lower days = better)
-- **F (Frequency):** How often do they buy? (higher = better)
-- **M (Monetary):** How much do they spend? (higher = better)
-
-### Customer Segments
-
-| Segment | Characteristics | Action |
-|---|---|---|
-| Champions | Recent, frequent, high spend | VIP treatment |
-| Loyal Customers | Good on all metrics | Rewards program |
-| Potential Loyalists | Recent, showing promise | Nurture them |
-| At Risk | Used to be good, now dormant | Win-back offers |
-| Hibernating | Very low engagement | Re-engage campaigns |
-| New/Low Value | New or minimal activity | Onboarding |
-
-## Power BI Dashboards
-
-- **Dashboard 1: Executive Overview** — Total customers and revenue, segment distribution, top products and regions
-- **Dashboard 2: Segmentation Detail** — Customer metrics by segment, RFM score distribution, customer drill-down
-- **Dashboard 3: Churn Risk** — At-risk customers, churn probability distribution, regional analysis
-
-## Enhanced Features
-
-### Data Pipeline Integration
-- Supports automated ingestion from Kaggle Retail Sales Dataset or local CSV files.
-- Built-in data validation, type casting, and DB insertion capabilities.
-
-### Automation & Scheduling
-- Batch scripts configured for Windows Task Scheduler / Cron to run the ETL pipeline weekly.
-
-### Advanced Analytics
-- **Market Basket Analysis**: Implements Apriori algorithm to define product association rules.
-- **Cohort Analysis**: Tracks customer retention and spending patterns across monthly acquisition cohorts.
-
-### Reporting & Visualization
-- Automated generation of HTML-based dashboards using Plotly.
-- Programmatic PowerPoint (.pptx) deck generation summarizing churn risk metrics for executive review.
-
-## Support
-
-- Application logs are generated in the `logs/` directory.
-- For dashboard issues, verify the SQL connection string in the `.env` file.
-- Ensure the target database has sufficient storage for incremental batch loads.
+All backend execution logic outputs `.log` files to the `logs/` directory for runtime visibility. The pipeline is designed around incremental or batch processing execution which can be easily migrated to managed cron orchestration platforms like Apache Airflow in production.
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See LICENSE for details.
 
-## Contact
+## Maintainer
 
-- **Maintainer:** Omkar Panchal - [@OmkarPanchal06](https://github.com/OmkarPanchal06)
-
----
-**Status:** Active | **Last Updated:** April 2026
+Omkar Panchal - GitHub: [@OmkarPanchal06](https://github.com/OmkarPanchal06)
