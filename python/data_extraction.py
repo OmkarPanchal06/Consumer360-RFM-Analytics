@@ -1,72 +1,93 @@
 """
-DataExtractionModule
-GetscustomerdatafromSQLServer
+Data Extraction Module
+
+This module provides the DataExtractor class, which handles the secure extraction 
+of customer-related data from the SQL Server database. It leverages SQLAlchemy 
+engines and Pandas for efficient data frame construction.
 """
 
-importpandasaspd
-importlogging
-fromsqlalchemyimportcreate_engine
-fromconfigimportCONNECTION_STRING,LOGS_FOLDER
-importos
+import pandas as pd
+import logging
+from sqlalchemy import create_engine
+from config import CONNECTION_STRING, LOGS_FOLDER
+import os
 
-#Setuplogging
+# Setup logging
 logging.basicConfig(
-level=logging.INFO,
-format='%(asctime)s-%(levelname)s-%(message)s',
-handlers=[
-logging.FileHandler(os.path.join(LOGS_FOLDER,'data_extraction.log')),
-logging.StreamHandler()
-]
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(os.path.join(LOGS_FOLDER, 'data_extraction.log')),
+        logging.StreamHandler()
+    ]
 )
-logger=logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
-classDataExtractor:
-"""ExtractscustomerdatafromSQLServer"""
+class DataExtractor:
+    """Extracts customer data from SQL Server"""
 
-def__init__(self):
-"""Connecttodatabase"""
-try:
-self.engine=create_engine(CONNECTION_STRING)
-logger.info("✓Databaseconnectionestablished")
-exceptExceptionase:
-logger.error(f"✗Connectionfailed:{e}")
-raise
+    def __init__(self):
+        """
+        Initializes the SQLAlchemy engine using the project's connection string.
+        
+        Raises:
+            Exception: If the database connection cannot be established.
+        """
+        try:
+            self.engine = create_engine(CONNECTION_STRING)
+            logger.info("Database connection established.")
+        except Exception as e:
+            logger.error(f"Failed to establish database connection: {e}")
+            raise
 
-defextract_customer_360(self):
-"""ExtractCustomer360viewdata"""
-query="""
-SELECT*
-FROMvw_Customer360_SingleView
-WHERETotalSpend>0
-ORDERBYTotalSpendDESC
-"""
+    def extract_customer_360(self):
+        """
+        Extracts the 'Customer 360' unified view from the database.
+        
+        The view aggregates historical transactions, customer demographics, 
+        and regional metadata into a single flat structure.
 
-try:
-df=pd.read_sql_query(query,self.engine)
-logger.info(f"✓Extracted{len(df):,}customerrecords")
-logger.info(f"Columns:{list(df.columns)}")
-returndf
+        Returns:
+            pd.DataFrame: A DataFrame containing the extracted customer records.
+        
+        Raises:
+            Exception: If the SQL query execution or data loading fails.
+        """
+        query = """
+        SELECT *
+        FROM vw_Customer360_SingleView
+        WHERE TotalSpend > 0
+        ORDER BY TotalSpend DESC
+        """
 
-exceptExceptionase:
-logger.error(f"✗Extractionfailed:{e}")
-raise
+        try:
+            df = pd.read_sql_query(query, self.engine)
+            logger.info(f"Extracted {len(df):,} customer records.")
+            logger.info(f"Fields available: {list(df.columns)}")
+            return df
 
-defclose_connection(self):
-"""Closedatabaseconnection"""
-self.engine.dispose()
-logger.info("Connectionclosed")
+        except Exception as e:
+            logger.error(f"✗ Extraction failed: {e}")
+            raise
+
+    def close_connection(self):
+        """
+        Gracefully disposes of the SQLAlchemy engine and closes active connections.
+        """
+        self.engine.dispose()
+        logger.info("Database connection pool disposed.")
 
 
-#TESTTHEMODULE
-if__name__=="__main__":
-print("TestingDataExtraction...")
+# TEST THE MODULE
+if __name__ == "__main__":
+    print("Testing Data Extraction...")
 
-extractor=DataExtractor()
-df=extractor.extract_customer_360()
+    extractor = DataExtractor()
+    df = extractor.extract_customer_360()
 
-print(f"\nDatashape:{df.shape}")
-print(f"\nFirst3rows:")
-print(df.head(3))
+    print(f"\nData shape: {df.shape}")
+    print(f"\nFirst 3 rows:")
+    print(df.head(3))
 
-extractor.close_connection()
+    extractor.close_connection()
