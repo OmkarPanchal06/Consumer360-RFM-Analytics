@@ -126,13 +126,27 @@ Consumer360-RFM-Analytics/
 - **Dashboard 2: Segmentation Detail** — Customer metrics by segment, RFM score distribution, customer drill-down
 - **Dashboard 3: Churn Risk** — At-risk customers, churn probability distribution, regional analysis
 
-## Next Steps
+## Consumer360 - Enhanced Features
 
-1. Replace sample data with real customer transactions
-2. Run full pipeline weekly
-3. Monitor dashboard metrics
-4. Share insights with business team
-5. Refine targeting based on results
+### ✅ Real Data Import
+- CSV file support for loading actual transactions from Kaggle Retail Sales Dataset
+- Automatic data validation and transformation
+
+### ✅ Automated Weekly Execution
+- Windows Task Scheduler integration (`run_pipeline.bat`)
+
+### ✅ Market Basket Analysis
+- Apriori algorithm for product associations
+- Top association rules exported to database
+
+### ✅ Cohort Analysis
+- Track retention by acquisition period
+- Identify high-value cohorts
+
+### ✅ Advanced Dashboards
+- Executive Summary PowerPoint Deck Generation
+- Interactive HTML Dashboard with Plotly
+- Market Basket & Cohort Analysis integration
 
 ## Support
 

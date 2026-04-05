@@ -10,6 +10,8 @@ from config import LOGS_FOLDER, CONNECTION_STRING, OUTPUT_TABLE_NAME
 from data_extraction import DataExtractor
 from rfm_calculator import RFMCalculator
 from clv_calculator import CLVCalculator
+from market_basket_analysis import MarketBasketAnalyzer
+from cohort_analysis import CohortAnalyzer
 from sqlalchemy import create_engine
 
 logging.basicConfig(
@@ -88,6 +90,26 @@ class Consumer360Pipeline:
         logger.info(f"✓ Exported {len(export_df):,} records to {OUTPUT_TABLE_NAME}")
         logger.info(f"  Columns: {len(export_df.columns)}")
     
+    def step5_market_basket(self):
+        """Step 5: Market Basket Analysis"""
+        logger.info("\n" + "="*70)
+        logger.info("STEP 5: MARKET BASKET ANALYSIS")
+        logger.info("="*70)
+        
+        analyzer = MarketBasketAnalyzer()
+        self.basket_rules = analyzer.run()
+        
+        return self.basket_rules
+    
+    def step6_cohort_analysis(self):
+        """Step 6: Cohort Analysis"""
+        logger.info("\n" + "="*70)
+        logger.info("STEP 6: COHORT ANALYSIS")
+        logger.info("="*70)
+        
+        analyzer = CohortAnalyzer()
+        analyzer.run()
+    
     def run(self):
         """Run complete pipeline"""
         logger.info("="*70)
@@ -100,6 +122,8 @@ class Consumer360Pipeline:
             self.step2_rfm()
             self.step3_clv()
             self.step4_export()
+            self.step5_market_basket()
+            self.step6_cohort_analysis()
             
             logger.info("\n" + "="*70)
             logger.info("✓ PIPELINE COMPLETED SUCCESSFULLY")
