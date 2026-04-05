@@ -1,182 +1,182 @@
 """
-Market Basket Analysis Module
-Uses Apriori algorithm to find product associations
+MarketBasketAnalysisModule
+UsesApriorialgorithmtofindproductassociations
 """
 
-import pandas as pd
-import logging
-import os
-import sys
+importpandasaspd
+importlogging
+importos
+importsys
 
-# Add python folder to path so imports work
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+#Addpythonfoldertopathsoimportswork
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__)))
 
-from config import LOGS_FOLDER, CONNECTION_STRING
-from sqlalchemy import create_engine
+fromconfigimportLOGS_FOLDER,CONNECTION_STRING
+fromsqlalchemyimportcreate_engine
 
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(os.path.join(LOGS_FOLDER, 'market_basket.log')),
-        logging.StreamHandler()
-    ]
+level=logging.INFO,
+format='%(asctime)s-%(levelname)s-%(message)s',
+handlers=[
+logging.FileHandler(os.path.join(LOGS_FOLDER,'market_basket.log')),
+logging.StreamHandler()
+]
 )
-logger = logging.getLogger(__name__)
+logger=logging.getLogger(__name__)
 
 
-class MarketBasketAnalyzer:
-    """Market basket analysis using Apriori algorithm"""
-    
-    def __init__(self):
-        self.engine = create_engine(CONNECTION_STRING)
-        logger.info("Market Basket Analyzer initialized")
-    
-    def extract_transactions(self):
-        """Extract transaction data from database"""
-        logger.info("Extracting transaction data...")
-        
-        query = """
-        SELECT 
-            fs.OrderNumber,
-            p.ProductName,
-            p.Category
-        FROM Fact_Sales fs
-        JOIN Dim_Product p ON fs.ProductKey = p.ProductKey
-        WHERE fs.ReturnFlag = 'N'
-        ORDER BY fs.OrderNumber
-        """
-        
-        try:
-            df = pd.read_sql_query(query, self.engine)
-            logger.info(f"✓ Extracted {len(df):,} transaction items")
-            logger.info(f"  Unique orders: {df['OrderNumber'].nunique():,}")
-            return df
-        except Exception as e:
-            logger.error(f"✗ Extraction failed: {e}")
-            raise
-    
-    def prepare_basket_data(self, df):
-        """Convert transaction data to basket format"""
-        logger.info("Preparing basket data...")
-        
-        # Group by order to get products per transaction
-        baskets = df.groupby('OrderNumber')['ProductName'].apply(list).values.tolist()
-        
-        logger.info(f"✓ Prepared {len(baskets)} transaction baskets")
-        logger.info(f"  Average items per basket: {df.groupby('OrderNumber').size().mean():.1f}")
-        
-        return baskets
-    
-    def analyze_associations(self, baskets):
-        """Analyze product associations"""
-        logger.info("Analyzing product associations...")
-        
-        try:
-            from mlxtend.frequent_patterns import apriori, association_rules
-            from mlxtend.preprocessing import TransactionEncoder
-        except ImportError:
-            logger.error("mlxtend not installed. Run: pip install mlxtend")
-            raise
-        
-        # Encode baskets
-        te = TransactionEncoder()
-        te_ary = te.fit(baskets).transform(baskets)
-        df_encoded = pd.DataFrame(te_ary, columns=te.columns_)
-        
-        logger.info(f"✓ Encoded {len(df_encoded)} transactions with {len(te.columns_)} products")
-        
-        # Apply Apriori
-        min_support = 0.001  # Lowered min_support since kaggle retail dataset has random assortment of items and we want to find something
-        frequent_itemsets = apriori(df_encoded, min_support=min_support, use_colnames=True)
-        
-        logger.info(f"✓ Found {len(frequent_itemsets)} frequent itemsets")
-        
-        # Generate rules
-        if len(frequent_itemsets) > 1:
-            min_confidence = 0.01  # Lowered confidence threshold
-            try:
-                rules = association_rules(frequent_itemsets, metric="confidence", min_threshold=min_confidence)
-                
-                # Convert frozensets to strings
-                rules['antecedents'] = rules['antecedents'].apply(lambda x: ', '.join(list(x)))
-                rules['consequents'] = rules['consequents'].apply(lambda x: ', '.join(list(x)))
-                
-                # Sort by lift (strength of association)
-                rules = rules.sort_values('lift', ascending=False)
-                
-                logger.info(f"✓ Generated {len(rules)} association rules")
-                logger.info("\nTop Rules (by Lift):")
-                logger.info("="*80)
-                
-                for idx, row in rules.head(10).iterrows():
-                    logger.info(f"\n{row['antecedents']} → {row['consequents']}")
-                    logger.info(f"  Support: {row['support']:.2%}")
-                    logger.info(f"  Confidence: {row['confidence']:.2%}")
-                    logger.info(f"  Lift: {row['lift']:.2f}")
-                
-                return rules
-            except ValueError as e:
-                logger.warning(f"Not enough itemsets to generate rules: {e}")
-                return pd.DataFrame()
-        else:
-            logger.warning("Not enough itemsets to generate rules")
-            return pd.DataFrame()
-    
-    def export_rules(self, rules):
-        """Export rules to database"""
-        logger.info("Exporting rules to database...")
-        
-        try:
-            rules.to_sql(
-                'Market_Basket_Analysis',
-                self.engine,
-                if_exists='replace',
-                index=False
-            )
-            logger.info(f"✓ Exported {len(rules)} rules to Market_Basket_Analysis table")
-        except Exception as e:
-            logger.error(f"✗ Export failed: {e}")
-    
-    def run(self):
-        """Run complete analysis"""
-        logger.info("="*80)
-        logger.info("STARTING MARKET BASKET ANALYSIS")
-        logger.info("="*80)
-        
-        try:
-            # Step 1: Extract
-            df_transactions = self.extract_transactions()
-            
-            # Step 2: Prepare
-            baskets = self.prepare_basket_data(df_transactions)
-            
-            # Step 3: Analyze
-            rules = self.analyze_associations(baskets)
-            
-            # Step 4: Export
-            if not rules.empty:
-                self.export_rules(rules)
-            
-            logger.info("\n" + "="*80)
-            logger.info("✓ MARKET Basket ANALYSIS COMPLETE")
-            logger.info("="*80)
-            
-            return rules
-        
-        except Exception as e:
-            logger.error(f"✗ Analysis failed: {e}")
-            raise
-        
-        finally:
-            self.engine.dispose()
+classMarketBasketAnalyzer:
+"""MarketbasketanalysisusingApriorialgorithm"""
+
+def__init__(self):
+self.engine=create_engine(CONNECTION_STRING)
+logger.info("MarketBasketAnalyzerinitialized")
+
+defextract_transactions(self):
+"""Extracttransactiondatafromdatabase"""
+logger.info("Extractingtransactiondata...")
+
+query="""
+SELECT
+fs.OrderNumber,
+p.ProductName,
+p.Category
+FROMFact_Salesfs
+JOINDim_ProductpONfs.ProductKey=p.ProductKey
+WHEREfs.ReturnFlag='N'
+ORDERBYfs.OrderNumber
+"""
+
+try:
+df=pd.read_sql_query(query,self.engine)
+logger.info(f"✓Extracted{len(df):,}transactionitems")
+logger.info(f"Uniqueorders:{df['OrderNumber'].nunique():,}")
+returndf
+exceptExceptionase:
+logger.error(f"✗Extractionfailed:{e}")
+raise
+
+defprepare_basket_data(self,df):
+"""Converttransactiondatatobasketformat"""
+logger.info("Preparingbasketdata...")
+
+#Groupbyordertogetproductspertransaction
+baskets=df.groupby('OrderNumber')['ProductName'].apply(list).values.tolist()
+
+logger.info(f"✓Prepared{len(baskets)}transactionbaskets")
+logger.info(f"Averageitemsperbasket:{df.groupby('OrderNumber').size().mean():.1f}")
+
+returnbaskets
+
+defanalyze_associations(self,baskets):
+"""Analyzeproductassociations"""
+logger.info("Analyzingproductassociations...")
+
+try:
+frommlxtend.frequent_patternsimportapriori,association_rules
+frommlxtend.preprocessingimportTransactionEncoder
+exceptImportError:
+logger.error("mlxtendnotinstalled.Run:pipinstallmlxtend")
+raise
+
+#Encodebaskets
+te=TransactionEncoder()
+te_ary=te.fit(baskets).transform(baskets)
+df_encoded=pd.DataFrame(te_ary,columns=te.columns_)
+
+logger.info(f"✓Encoded{len(df_encoded)}transactionswith{len(te.columns_)}products")
+
+#ApplyApriori
+min_support=0.001#Loweredmin_supportsincekaggleretaildatasethasrandomassortmentofitemsandwewanttofindsomething
+frequent_itemsets=apriori(df_encoded,min_support=min_support,use_colnames=True)
+
+logger.info(f"✓Found{len(frequent_itemsets)}frequentitemsets")
+
+#Generaterules
+iflen(frequent_itemsets)>1:
+min_confidence=0.01#Loweredconfidencethreshold
+try:
+rules=association_rules(frequent_itemsets,metric="confidence",min_threshold=min_confidence)
+
+#Convertfrozensetstostrings
+rules['antecedents']=rules['antecedents'].apply(lambdax:','.join(list(x)))
+rules['consequents']=rules['consequents'].apply(lambdax:','.join(list(x)))
+
+#Sortbylift(strengthofassociation)
+rules=rules.sort_values('lift',ascending=False)
+
+logger.info(f"✓Generated{len(rules)}associationrules")
+logger.info("\nTopRules(byLift):")
+logger.info("="*80)
+
+foridx,rowinrules.head(10).iterrows():
+logger.info(f"\n{row['antecedents']}→{row['consequents']}")
+logger.info(f"Support:{row['support']:.2%}")
+logger.info(f"Confidence:{row['confidence']:.2%}")
+logger.info(f"Lift:{row['lift']:.2f}")
+
+returnrules
+exceptValueErrorase:
+logger.warning(f"Notenoughitemsetstogeneraterules:{e}")
+returnpd.DataFrame()
+else:
+logger.warning("Notenoughitemsetstogeneraterules")
+returnpd.DataFrame()
+
+defexport_rules(self,rules):
+"""Exportrulestodatabase"""
+logger.info("Exportingrulestodatabase...")
+
+try:
+rules.to_sql(
+'Market_Basket_Analysis',
+self.engine,
+if_exists='replace',
+index=False
+)
+logger.info(f"✓Exported{len(rules)}rulestoMarket_Basket_Analysistable")
+exceptExceptionase:
+logger.error(f"✗Exportfailed:{e}")
+
+defrun(self):
+"""Runcompleteanalysis"""
+logger.info("="*80)
+logger.info("STARTINGMARKETBASKETANALYSIS")
+logger.info("="*80)
+
+try:
+#Step1:Extract
+df_transactions=self.extract_transactions()
+
+#Step2:Prepare
+baskets=self.prepare_basket_data(df_transactions)
+
+#Step3:Analyze
+rules=self.analyze_associations(baskets)
+
+#Step4:Export
+ifnotrules.empty:
+self.export_rules(rules)
+
+logger.info("\n"+"="*80)
+logger.info("✓MARKETBasketANALYSISCOMPLETE")
+logger.info("="*80)
+
+returnrules
+
+exceptExceptionase:
+logger.error(f"✗Analysisfailed:{e}")
+raise
+
+finally:
+self.engine.dispose()
 
 
-if __name__ == "__main__":
-    analyzer = MarketBasketAnalyzer()
-    rules = analyzer.run()
-    
-    if not rules.empty:
-        print("\n" + "="*80)
-        print("Top 5 Rules:")
-        print(rules[['antecedents', 'consequents', 'support', 'confidence', 'lift']].head(5))
+if__name__=="__main__":
+analyzer=MarketBasketAnalyzer()
+rules=analyzer.run()
+
+ifnotrules.empty:
+print("\n"+"="*80)
+print("Top5Rules:")
+print(rules[['antecedents','consequents','support','confidence','lift']].head(5))

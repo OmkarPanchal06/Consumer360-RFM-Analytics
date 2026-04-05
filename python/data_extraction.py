@@ -1,72 +1,72 @@
 """
-Data Extraction Module
-Gets customer data from SQL Server
+DataExtractionModule
+GetscustomerdatafromSQLServer
 """
 
-import pandas as pd
-import logging
-from sqlalchemy import create_engine
-from config import CONNECTION_STRING, LOGS_FOLDER
-import os
+importpandasaspd
+importlogging
+fromsqlalchemyimportcreate_engine
+fromconfigimportCONNECTION_STRING,LOGS_FOLDER
+importos
 
-# Setup logging
+#Setuplogging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(os.path.join(LOGS_FOLDER, 'data_extraction.log')),
-        logging.StreamHandler()
-    ]
+level=logging.INFO,
+format='%(asctime)s-%(levelname)s-%(message)s',
+handlers=[
+logging.FileHandler(os.path.join(LOGS_FOLDER,'data_extraction.log')),
+logging.StreamHandler()
+]
 )
-logger = logging.getLogger(__name__)
+logger=logging.getLogger(__name__)
 
 
-class DataExtractor:
-    """Extracts customer data from SQL Server"""
+classDataExtractor:
+"""ExtractscustomerdatafromSQLServer"""
 
-    def __init__(self):
-        """Connect to database"""
-        try:
-            self.engine = create_engine(CONNECTION_STRING)
-            logger.info("✓ Database connection established")
-        except Exception as e:
-            logger.error(f"✗ Connection failed: {e}")
-            raise
+def__init__(self):
+"""Connecttodatabase"""
+try:
+self.engine=create_engine(CONNECTION_STRING)
+logger.info("✓Databaseconnectionestablished")
+exceptExceptionase:
+logger.error(f"✗Connectionfailed:{e}")
+raise
 
-    def extract_customer_360(self):
-        """Extract Customer 360 view data"""
-        query = """
-        SELECT *
-        FROM vw_Customer360_SingleView
-        WHERE TotalSpend > 0
-        ORDER BY TotalSpend DESC
-        """
+defextract_customer_360(self):
+"""ExtractCustomer360viewdata"""
+query="""
+SELECT*
+FROMvw_Customer360_SingleView
+WHERETotalSpend>0
+ORDERBYTotalSpendDESC
+"""
 
-        try:
-            df = pd.read_sql_query(query, self.engine)
-            logger.info(f"✓ Extracted {len(df):,} customer records")
-            logger.info(f"  Columns: {list(df.columns)}")
-            return df
+try:
+df=pd.read_sql_query(query,self.engine)
+logger.info(f"✓Extracted{len(df):,}customerrecords")
+logger.info(f"Columns:{list(df.columns)}")
+returndf
 
-        except Exception as e:
-            logger.error(f"✗ Extraction failed: {e}")
-            raise
+exceptExceptionase:
+logger.error(f"✗Extractionfailed:{e}")
+raise
 
-    def close_connection(self):
-        """Close database connection"""
-        self.engine.dispose()
-        logger.info("Connection closed")
+defclose_connection(self):
+"""Closedatabaseconnection"""
+self.engine.dispose()
+logger.info("Connectionclosed")
 
 
-# TEST THE MODULE
-if __name__ == "__main__":
-    print("Testing Data Extraction...")
+#TESTTHEMODULE
+if__name__=="__main__":
+print("TestingDataExtraction...")
 
-    extractor = DataExtractor()
-    df = extractor.extract_customer_360()
+extractor=DataExtractor()
+df=extractor.extract_customer_360()
 
-    print(f"\nData shape: {df.shape}")
-    print(f"\nFirst 3 rows:")
-    print(df.head(3))
+print(f"\nDatashape:{df.shape}")
+print(f"\nFirst3rows:")
+print(df.head(3))
 
-    extractor.close_connection()
+extractor.close_connection()

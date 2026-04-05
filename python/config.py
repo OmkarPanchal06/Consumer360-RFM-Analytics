@@ -1,70 +1,70 @@
 """
-Configuration for Consumer360 Project
+ConfigurationforConsumer360Project
 """
 
-import os
-from dotenv import load_dotenv
+importos
+fromdotenvimportload_dotenv
 
-# Load environment variables from .env file
+#Loadenvironmentvariablesfrom.envfile
 load_dotenv()
 
-# ============================================================
-# DATABASE CONFIGURATION
-# ============================================================
+#============================================================
+#DATABASECONFIGURATION
+#============================================================
 
-SQL_SERVER = os.getenv('SQL_SERVER', 'localhost')
-DATABASE = os.getenv('DATABASE', 'Consumer360_DB')
-DB_USERNAME = os.getenv('DB_USERNAME', '')
-DB_PASSWORD = os.getenv('DB_PASSWORD', '')
-DRIVER = 'ODBC Driver 17 for SQL Server'
+SQL_SERVER=os.getenv('SQL_SERVER','localhost')
+DATABASE=os.getenv('DATABASE','Consumer360_DB')
+DB_USERNAME=os.getenv('DB_USERNAME','')
+DB_PASSWORD=os.getenv('DB_PASSWORD','')
+DRIVER='ODBCDriver17forSQLServer'
 
-# Build connection string:
-# - If DB_USERNAME is set, use SQL Server Authentication
-# - Otherwise, use Windows Authentication (trusted_connection)
-if DB_USERNAME:
-    CONNECTION_STRING = (
-        f"mssql+pyodbc://{DB_USERNAME}:{DB_PASSWORD}@{SQL_SERVER}/{DATABASE}"
-        f"?driver={DRIVER}"
-    )
+#Buildconnectionstring:
+#-IfDB_USERNAMEisset,useSQLServerAuthentication
+#-Otherwise,useWindowsAuthentication(trusted_connection)
+ifDB_USERNAME:
+CONNECTION_STRING=(
+f"mssql+pyodbc://{DB_USERNAME}:{DB_PASSWORD}@{SQL_SERVER}/{DATABASE}"
+f"?driver={DRIVER}"
+)
 else:
-    # Windows Authentication (default for local installs)
-    CONNECTION_STRING = (
-        f"mssql+pyodbc://@{SQL_SERVER}/{DATABASE}"
-        f"?driver={DRIVER}&trusted_connection=yes"
-    )
+#WindowsAuthentication(defaultforlocalinstalls)
+CONNECTION_STRING=(
+f"mssql+pyodbc://@{SQL_SERVER}/{DATABASE}"
+f"?driver={DRIVER}&trusted_connection=yes"
+)
 
-# ============================================================
-# PROJECT PATHS
-# ============================================================
+#============================================================
+#PROJECTPATHS
+#============================================================
 
-PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SQL_FOLDER = os.path.join(PROJECT_ROOT, 'sql')
-LOGS_FOLDER = os.path.join(PROJECT_ROOT, 'logs')
-DATA_FOLDER = os.path.join(PROJECT_ROOT, 'data')
+PROJECT_ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SQL_FOLDER=os.path.join(PROJECT_ROOT,'sql')
+LOGS_FOLDER=os.path.join(PROJECT_ROOT,'logs')
+DATA_FOLDER=os.path.join(PROJECT_ROOT,'data')
 
-# Create folders if they don't exist
-os.makedirs(LOGS_FOLDER, exist_ok=True)
-os.makedirs(DATA_FOLDER, exist_ok=True)
+#Createfoldersiftheydon'texist
+os.makedirs(LOGS_FOLDER,exist_ok=True)
+os.makedirs(DATA_FOLDER,exist_ok=True)
 
-# ============================================================
-# RFM PARAMETERS
-# ============================================================
+#============================================================
+#RFMPARAMETERS
+#============================================================
 
-RFM_WEIGHTS = {
-    'recency_weight': 1.0,
-    'frequency_weight': 1.2,
-    'monetary_weight': 1.5
+RFM_WEIGHTS={
+'recency_weight':1.0,
+'frequency_weight':1.2,
+'monetary_weight':1.5
 }
 
-# ============================================================
-# LOGGING
-# ============================================================
+#============================================================
+#LOGGING
+#============================================================
 
-LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
-LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+LOG_LEVEL=os.getenv('LOG_LEVEL','INFO')
+LOG_FORMAT='%(asctime)s-%(name)s-%(levelname)s-%(message)s'
 
-# ============================================================
-# EXPORT SETTINGS
-# ============================================================
+#============================================================
+#EXPORTSETTINGS
+#============================================================
 
-OUTPUT_TABLE_NAME = 'RFM_Results_Output'
+OUTPUT_TABLE_NAME='RFM_Results_Output'

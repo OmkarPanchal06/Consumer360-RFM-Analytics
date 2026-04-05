@@ -126,41 +126,36 @@ Consumer360-RFM-Analytics/
 - **Dashboard 2: Segmentation Detail** — Customer metrics by segment, RFM score distribution, customer drill-down
 - **Dashboard 3: Churn Risk** — At-risk customers, churn probability distribution, regional analysis
 
-## Consumer360 - Enhanced Features
+## Enhanced Features
 
-### ✅ Real Data Import
-- CSV file support for loading actual transactions from Kaggle Retail Sales Dataset
-- Automatic data validation and transformation
+### Data Pipeline Integration
+- Supports automated ingestion from Kaggle Retail Sales Dataset or local CSV files.
+- Built-in data validation, type casting, and DB insertion capabilities.
 
-### ✅ Automated Weekly Execution
-- Windows Task Scheduler integration (`run_pipeline.bat`)
+### Automation & Scheduling
+- Batch scripts configured for Windows Task Scheduler / Cron to run the ETL pipeline weekly.
 
-### ✅ Market Basket Analysis
-- Apriori algorithm for product associations
-- Top association rules exported to database
+### Advanced Analytics
+- **Market Basket Analysis**: Implements Apriori algorithm to define product association rules.
+- **Cohort Analysis**: Tracks customer retention and spending patterns across monthly acquisition cohorts.
 
-### ✅ Cohort Analysis
-- Track retention by acquisition period
-- Identify high-value cohorts
-
-### ✅ Advanced Dashboards
-- Executive Summary PowerPoint Deck Generation
-- Interactive HTML Dashboard with Plotly
-- Market Basket & Cohort Analysis integration
+### Reporting & Visualization
+- Automated generation of HTML-based dashboards using Plotly.
+- Programmatic PowerPoint (.pptx) deck generation summarizing churn risk metrics for executive review.
 
 ## Support
 
-- Check `logs/` folder for errors
-- Review Power BI queries if dashboards are not updating
-- Ensure SQL Server has enough disk space
+- Application logs are generated in the `logs/` directory.
+- For dashboard issues, verify the SQL connection string in the `.env` file.
+- Ensure the target database has sufficient storage for incremental batch loads.
 
 ## License
 
-MIT License - feel free to use and modify
+MIT License. See [LICENSE](LICENSE) for details.
 
 ## Contact
 
-- **GitHub:** [@OmkarPanchal06](https://github.com/OmkarPanchal06)
+- **Maintainer:** Omkar Panchal - [@OmkarPanchal06](https://github.com/OmkarPanchal06)
 
 ---
-**Status:** ✅ Production Ready | **Last Updated:** April 2026
+**Status:** Active | **Last Updated:** April 2026
