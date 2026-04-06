@@ -1,4 +1,4 @@
-# 🚀 Consumer360: Project Documentation & Business Logic
+#  Consumer360: Project Documentation & Business Logic
 
 Welcome to the **Consumer360-RFM-Analytics** suite. This document provides a detailed, beginner-friendly walkthrough of the architecture, algorithms, and mathematical formulas used to transform raw data into high-value business intelligence.
 
